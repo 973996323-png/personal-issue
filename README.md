@@ -2,7 +2,9 @@
 
 一个以 AI 通识学习为主线的个人内容仓库：Markdown 笔记 + 两个可直接打开的单文件网页。
 
-> 🌐 在线访问：https://simmerfish.github.io/personal-issue/
+> 🌐 在线访问
+> - 知识站首页：https://simmerfish.github.io/personal-issue/
+> - Claude Code 介绍页：https://simmerfish.github.io/personal-issue/test-web/
 
 ## 目录结构
 
@@ -46,7 +48,13 @@ python3 -m http.server 8000
 
 ### 🧪 `test-web/`
 
-页面效果实验，与知识站相互独立。
+页面效果实验：一份 **Claude Code 介绍页**（同样是自包含单文件，无外部依赖）。
+
+- **在线**：https://simmerfish.github.io/personal-issue/test-web/
+- **本地**：双击 `test-web/index.html`，或 `python3 -m http.server 8000` 后访问 `http://localhost:8000/test-web/`
+- 知识站页脚已加入口链接（「Claude Code 介绍页 →」），从首页可直接跳转
+
+> 机制说明：Pages 对目录会自动寻找其中的 `index.html` 作为该路径首页，所以子目录无需额外配置即可访问。
 
 ## 日常使用
 
