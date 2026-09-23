@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Claude Code · 会代码的 AI 助手（由“szy”制作）</title>
+<style>
+  /* ========== 基础变量：现代简约风格 ========== */
+  :root {
+    --bg: #faf9f7;
+    --bg-soft: #f1efe9;
+    --text: #1f1e1c;
+    --text-soft: #6b6763;
+    --accent: #d97756;      /* 品牌珊瑚橙 */
+    --accent-deep: #c4633f;
+    --card: #ffffff;
+    --border: #e8e4dd;
+    --radius: 16px;
+    --shadow: 0 2px 8px rgba(31, 30, 28, 0.04);
+    --shadow-lift: 0 12px 32px rgba(31, 30, 28, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* ========== 顶部导航 ========== */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250, 249, 247, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+  .logo-mark {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-size: 18px;
+  }
+  nav .links { display: flex; gap: 28px; }
+  nav a { color: var(--text-soft); text-decoration: none; font-size: 15px; transition: color .2s; }
+  nav a:hover { color: var(--accent); }
+
+  /* ========== Hero 区 ========== */
+  .hero { padding: 96px 0 72px; text-align: center; }
+  .hero .badge {
+    display: inline-block; padding: 6px 16px; margin-bottom: 24px;
+    border: 1px solid var(--border); border-radius: 999px;
+    background: var(--card); color: var(--text-soft); font-size: 13px;
+  }
+  .hero h1 { font-size: clamp(34px, 6vw, 56px); font-weight: 800; letter-spacing: -0.02em; }
+  .hero h1 .hl { color: var(--accent); }
+  .hero p.sub {
+    margin: 20px auto 0; max-width: 560px;
+    font-size: 18px; color: var(--text-soft);
+  }
+  .hero .cta-row { margin-top: 36px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 26px; border-radius: 999px;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    text-decoration: none; border: none; transition: all .25s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(217,119,87,.35); }
+  .btn-primary:hover { background: var(--accent-deep); transform: translateY(-2px); }
+  .btn-ghost { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ========== 通用区块 ========== */
+  section { padding: 72px 0; }
+  .sec-title { font-size: 32px; font-weight: 800; text-align: center; letter-spacing: -0.01em; }
+  .sec-sub { text-align: center; color: var(--text-soft); margin: 12px auto 48px; max-width: 520px; }
+
+  /* ========== 功能卡片 ========== */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 24px;
+    box-shadow: var(--shadow);
+    transition: transform .25s, box-shadow .25s;
+  }
+  .card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lift); }
+  .card .icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: var(--bg-soft); display: grid; place-items: center;
+    font-size: 22px; margin-bottom: 16px;
+  }
+  .card h3 { font-size: 17px; margin-bottom: 8px; }
+  .card p { font-size: 14.5px; color: var(--text-soft); }
+
+  /* ========== 安装方式：Tab 切换 ========== */
+  .tabs { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
+  .tab {
+    padding: 10px 22px; border-radius: 999px; cursor: pointer;
+    background: var(--card); border: 1px solid var(--border);
+    font-size: 15px; color: var(--text-soft); transition: all .2s;
+  }
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  .panel {
+    display: none; max-width: 720px; margin: 0 auto;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow);
+  }
+  .panel.show { display: block; animation: fadeIn .35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .panel h3 { font-size: 19px; margin-bottom: 6px; }
+  .panel .desc { color: var(--text-soft); font-size: 15px; margin-bottom: 20px; }
+
+  .cmd-box {
+    display: flex; align-items: center; gap: 12px;
+    background: #262523; color: #f5f4f2;
+    border-radius: 12px; padding: 16px 20px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 15px; overflow-x: auto;
+  }
+  .cmd-box .dollar { color: var(--accent); user-select: none; }
+  .copy-btn {
+    margin-left: auto; flex-shrink: 0;
+    background: rgba(255,255,255,.1); color: #fff; border: none;
+    border-radius: 8px; padding: 7px 14px; font-size: 13px;
+    cursor: pointer; transition: background .2s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,.22); }
+  .copy-btn.done { background: var(--accent); }
+
+  .panel ol { padding-left: 22px; color: var(--text-soft); font-size: 15px; }
+  .panel ol li { margin: 10px 0; }
+  .panel ol li strong { color: var(--text); }
+  .panel a.link { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .panel a.link:hover { text-decoration: underline; }
+
+  .note {
+    margin-top: 18px; padding: 12px 16px;
+    background: var(--bg-soft); border-radius: 10px;
+    font-size: 13.5px; color: var(--text-soft);
+  }
+
+  /* ========== 三步上手 ========== */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .step { text-align: center; padding: 28px 20px; }
+  .step .num {
+    width: 44px; height: 44px; margin: 0 auto 16px;
+    border-radius: 50%; background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-weight: 800; font-size: 18px;
+  }
+  .step h3 { font-size: 17px; margin-bottom: 8px; }
+  .step p { font-size: 14.5px; color: var(--text-soft); }
+
+  /* ========== FAQ 折叠 ========== */
+  .faq { max-width: 720px; margin: 0 auto; }
+  .faq-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 12px; overflow: hidden;
+  }
+  .faq-q {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 22px; background: none; border: none; cursor: pointer;
+    font-size: 16px; font-weight: 600; color: var(--text); text-align: left;
+  }
+  .faq-q .arrow { transition: transform .3s; color: var(--text-soft); }
+  .faq-item.open .faq-q .arrow { transform: rotate(180deg); color: var(--accent); }
+  .faq-a {
+    max-height: 0; overflow: hidden; transition: max-height .35s ease;
+    color: var(--text-soft); font-size: 15px;
+  }
+  .faq-item.open .faq-a { max-height: 300px; }
+  .faq-a-inner { padding: 0 22px 20px; }
+
+  /* ========== 页脚 ========== */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0; text-align: center;
+    color: var(--text-soft); font-size: 14px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ========== Toast 提示 ========== */
+  #toast {
+    position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: #fff; padding: 12px 24px;
+    border-radius: 999px; font-size: 14px; opacity: 0;
+    pointer-events: none; transition: all .35s; z-index: 999;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ========== 滚动淡入 ========== */
+  .reveal { opacity: 0; transform: translateY(24px); transition: all .7s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ========== 响应式 ========== */
+  @media (max-width: 640px) {
+    nav .links { display: none; }
+    section { padding: 56px 0; }
+    .panel { padding: 24px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="logo"><div class="logo-mark">✻</div>Claude Code</div>
+      <div class="links">
+        <a href="#what">它能做什么呢?</a>
+        <a href="#download">怎么下载</a>
+        <a href="#start">三步上手</a>
+        <a href="#faq">常见问题</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero：一句话讲清楚我是谁 -->
+<section class="hero">
+  <div class="wrap">
+    <div class="badge">🌱 零基础也能看懂的介绍</div>
+    <h1>你好，我是 <span class="hl">Claude Code</span><br>一个会写代码的 AI 助手啦啦啦啦啦啦啦嘻嘻😁</h1>
+    <p class="sub">
+      你只需要像聊天一样，用大白话告诉我「我想要一个什么样的网页 / 程序」，
+      我就会直接在你的电脑上动手：创建文件、写代码、修 Bug、跑命令——全程自动完成。
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#download">立即下载 →</a>
+      <a class="btn btn-ghost" href="#what">先看看我能做什么</a>
+    </div>
+  </div>
+</section>
+
+<!-- 它能做什么 -->
+<section id="what">
+  <div class="wrap">
+    <h2 class="sec-title reveal">它能帮你做什么？</h2>
+    <p class="sec-sub reveal">不懂代码没关系，说出你想要的效果就行，剩下的交给我。</p>
+    <div class="grid">
+      <div class="card reveal">
+        <div class="icon">🎨</div>
+        <h3>做出你想要的网页</h3>
+        <p>「帮我做一个个人主页」「做个记账小工具」——几分钟后，网页就在你的文件夹里生成好了。</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon">🐛</div>
+        <h3>修复程序报错</h3>
+        <p>程序跑不起来？把报错信息发给它，它会自己定位问题并修好，还会告诉你原因。</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon">📖</div>
+        <h3>看懂任何一段代码</h3>
+        <p>看到别人的代码看不懂？丢给它，它会像老师一样，一行一行给你讲明白。</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon">⚡</div>
+        <h3>搞定重复枯燥的工作</h3>
+        <p>批量改文件名、整理数据、格式化文档……这些机械劳动，说一句话它就能批量完成。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 下载方式 -->
+<section id="download" style="background: var(--bg-soft);">
+  <div class="wrap">
+    <h2 class="sec-title reveal">怎么下载？</h2>
+    <p class="sec-sub reveal">四种方式任选其一。最简单的是网页版——打开网址就能用，什么都不用装。</p>
+
+    <div class="tabs reveal">
+      <div class="tab active" data-panel="p-web">🌐 网页版（最简单）</div>
+      <div class="tab" data-panel="p-cli">💻 命令行（最常用）</div>
+      <div class="tab" data-panel="p-desktop">🖥️ 桌面应用</div>
+      <div class="tab" data-panel="p-ide">🧩 编辑器插件</div>
+    </div>
+
+    <!-- 网页版 -->
+    <div class="panel show" id="p-web">
+      <h3>打开浏览器就能用</h3>
+      <p class="desc">不用安装任何东西，就像访问普通网站一样，适合第一次接触的新手。</p>
+      <div class="cmd-box">
+        <span class="dollar">→</span>
+        <span>claude.ai/code</span>
+        <button class="copy-btn" data-copy="https://claude.ai/code">复制网址</button>
+      </div>
+      <div class="note">💡 打开上面这个网址，注册 / 登录账号即可开始使用。</div>
+    </div>
+
+    <!-- 命令行 -->
+    <div class="panel" id="p-cli">
+      <h3>在终端里安装（推荐程序员使用）</h3>
+      <p class="desc">只需要下面这一行命令，复制粘贴到终端（Terminal）里，回车即可：</p>
+      <div class="cmd-box">
+        <span class="dollar">$</span>
+        <span>npm install -g @anthropic-ai/claude-code</span>
+        <button class="copy-btn" data-copy="npm install -g @anthropic-ai/claude-code">复制命令</button>
+      </div>
+      <ol>
+        <li>装好后，在终端里输入 <strong>claude</strong> 并回车</li>
+        <li>根据提示登录你的账号</li>
+        <li>之后直接用中文对话，它就会开始帮你干活</li>
+      </ol>
+      <div class="note">💡 前提：电脑上已装有 Node.js。没有的话，先去 nodejs.org 下载安装一个。</div>
+    </div>
+
+    <!-- 桌面应用 -->
+    <div class="panel" id="p-desktop">
+      <h3>下载桌面 App</h3>
+      <p class="desc">和微信、Chrome 一样，装一个应用程序，点图标就能用。支持 Mac 和 Windows。</p>
+      <ol>
+        <li>访问官方下载页：<a class="link" href="https://claude.com/product/claude-code" target="_blank" rel="noopener">claude.com/product/claude-code</a></li>
+        <li>选择你的系统版本（Mac / Windows）并下载</li>
+        <li>双击安装包，按提示一路「下一步」即可</li>
+      </ol>
+    </div>
+
+    <!-- IDE 插件 -->
+    <div class="panel" id="p-ide">
+      <h3>装进你的代码编辑器</h3>
+      <p class="desc">如果你已经在用 VS Code 或 JetBrains 系列（如 IDEA、PyCharm），可以直接装插件，边写代码边让它帮忙。</p>
+      <ol>
+        <li>打开编辑器的<strong>插件 / 扩展商店</strong></li>
+        <li>搜索 <strong>Claude Code</strong></li>
+        <li>点击「安装 Install」，然后按提示登录即可</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 三步上手 -->
+<section id="start">
+  <div class="wrap">
+    <h2 class="sec-title reveal">三步上手</h2>
+    <p class="sec-sub reveal">就这么简单，像发微信一样开始你的第一次对话。</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="num">1</div>
+        <h3>下载并登录</h3>
+        <p>选一种上面的方式安装，打开后用邮箱注册并登录账号。</p>
+      </div>
+      <div class="step reveal">
+        <div class="num">2</div>
+        <h3>说出你的需求</h3>
+        <p>比如：「帮我做一个介绍我自己的网页」。中文大白话就行，不用任何专业术语。</p>
+      </div>
+      <div class="step reveal">
+        <div class="num">3</div>
+        <h3>验收成果</h3>
+        <p>它会自动写好代码并生成文件，你打开看效果，不满意就继续让它改。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background: var(--bg-soft);">
+  <div class="wrap">
+    <h2 class="sec-title reveal">常见问题</h2>
+    <p class="sec-sub reveal">点击问题展开答案。</p>
+    <div class="faq">
+      <div class="faq-item">
+        <button class="faq-q">我完全不会编程，能用吗？<span class="arrow">▾</span></button>
+        <div class="faq-a"><div class="faq-a-inner">完全可以。你只需要会打字、会用中文描述想法就行。它负责所有技术细节，还会把每一步在做什么讲给你听。</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">免费吗？<span class="arrow">▾</span></button>
+        <div class="faq-a"><div class="faq-a-inner">新用户有免费试用额度，日常小任务基本够用。用得多的话可以订阅套餐，具体价格以官网为准。</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">它会弄坏我的电脑吗？<span class="arrow">▾</span></button>
+        <div class="faq-a"><div class="faq-a-inner">不会。重要操作（删除文件、安装软件等）都会先征求你的同意，你点确认后它才会执行。你的每一步都有掌控权。</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">网页版和命令行版有什么区别？<span class="arrow">▾</span></button>
+        <div class="faq-a"><div class="faq-a-inner">功能是差不多的。网页版最简单，打开就能用；命令行版本直接运行在你自己电脑上，可以直接读写你本地的项目文件，适合真正做开发。</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Claude Code · 由 Anthropic 打造的 AI 编程助手</p>
+    <p style="margin-top:8px;">官网：<a href="https://claude.com/product/claude-code" target="_blank" rel="noopener">claude.com/product/claude-code</a></p>
+  </div>
+</footer>
+
+<!-- 复制成功的 Toast 提示 -->
+<div id="toast">✓ 已复制到剪贴板</div>
+
+<script>
+  // ===== 交互 1：Tab 切换安装方式 =====
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+      document.getElementById(tab.dataset.panel).classList.add('show');
+    });
+  });
+
+  // ===== 交互 2：一键复制 + Toast 提示 =====
+  const toast = document.getElementById('toast');
+  let toastTimer;
+  function showToast() {
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.copy;
+      // 优先用现代 API，失败则退回老办法
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(markDone);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); ta.remove();
+        markDone();
+      }
+      function markDone() {
+        const old = btn.textContent;
+        btn.textContent = '✓ 已复制';
+        btn.classList.add('done');
+        showToast();
+        setTimeout(() => { btn.textContent = old; btn.classList.remove('done'); }, 1600);
+      }
+    });
+  });
+
+  // ===== 交互 3：FAQ 手风琴折叠 =====
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      // 简约风格：同时只展开一个
+      document.querySelectorAll('.faq-item').forEach(i => {
+        if (i !== item) i.classList.remove('open');
+      });
+      item.classList.toggle('open');
+    });
+  });
+
+  // ===== 交互 4：滚动时元素淡入 =====
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
