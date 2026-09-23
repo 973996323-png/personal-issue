@@ -2,7 +2,7 @@
 
 一个以 AI 通识学习为主线的个人内容仓库：Markdown 笔记 + 两个可直接打开的单文件网页。
 
-> 🌐 在线访问：https://973996323-png.github.io/personal-issue/
+> 🌐 在线访问：https://simmerfish.github.io/personal-issue/
 
 ## 目录结构
 
@@ -56,7 +56,7 @@ git commit -m "docs: 更新内容"
 git push
 ```
 
-本仓库通过 SSH 推送（`~/.ssh/id_ed25519` → `git@github.com:973996323-png/personal-issue.git`）。
+本仓库通过 SSH 推送（`~/.ssh/id_ed25519` → `git@github.com:simmerfish/personal-issue.git`）。
 
 ## 忽略规则
 
