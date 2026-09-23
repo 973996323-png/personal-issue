@@ -2,13 +2,15 @@
 
 一个以 AI 通识学习为主线的个人内容仓库：Markdown 笔记 + 两个可直接打开的单文件网页。
 
+> 🌐 在线访问：https://973996323-png.github.io/personal-issue/
+
 ## 目录结构
 
 ```
 .
+├── index.html             🌐 知识站首页（由 GitHub Pages 发布，可直接双击打开）
 ├── AI通识知识整理/        📚 主笔记（4 篇 Markdown + 目录导航 README）
 ├── AI通识知识笔记/        📝 早期整理稿（内容与主笔记有差异，保留作存档）
-├── AI通识知识站/          🌐 单文件知识站网页（index.html，可直接双击打开）
 └── test-web/              🧪 页面实验（Claude Code 介绍页，index.html）
 ```
 
@@ -25,20 +27,22 @@
 
 早期版本的 `AI通识知识整理.md`。与主笔记**内容不完全相同**（各自独立演进），因此单独保留而非删除，避免丢失历史结论。
 
-### 🌐 `AI通识知识站/`
+### 🌐 知识站（根目录 `index.html`）
 
 把上面的笔记做成的**单文件静态网站**（内联 CSS/JS，无外部依赖、无需构建）：从「晶体管到机器人」的图文通识站，含自测题与延伸学习路径。
+
+放在仓库**根目录**，是为了让 GitHub Pages 能直接把它作为首页发布（Pages 选 `main` 分支 + `/`(root) 即可）。
 
 **本地预览**：直接双击 `index.html`，或
 
 ```bash
-python3 -m http.server 8000 --directory AI通识知识站
+python3 -m http.server 8000
 # 打开 http://localhost:8000
 ```
 
 **发布**：整站只有一个文件，任意静态托管都可直接用（GitHub Pages / Cloudflare Pages / surge / Vercel…）。
 
-> 该目录原先带一个 `CNAME`（内容为 `ai-tongshi.surge.sh`），2025 年已删除。它属于 surge.sh 的发布域名残留，若将来启用 GitHub Pages 并绑定自定义域名，再新建 `CNAME` 写入自己的域名即可。
+> 📌 2025 年做过两次结构调整：删除了该站的 `CNAME`（内容为 `ai-tongshi.surge.sh`，是 surge.sh 的发布域名残留）；原 `AI通识知识站/` 目录已取消，`index.html` 上提到根目录。若将来要绑定自定义域名，在根目录新建 `CNAME` 写入自己的域名即可。
 
 ### 🧪 `test-web/`
 
