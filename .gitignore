@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# 环境与密钥
+.env
+.env.*
+!.env.example
+
+# 依赖与构建产物
+node_modules/
+dist/
+build/
+*.log
